@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: check for vars file
+    stat:
+      path: vars.yaml
+    register: vars_file
+
+  - name: import vars
+    include_vars: vars.yaml
+    no_log: yes
+    when: vars_file.stat.exists
+
+  - name: get public IP of current system
+    ipify_facts:
+
+  - name: Update A record with current public IP
+    cloudflare_dns:
+      account_api_token: "{{ account_api_token }}"
+      account_email: "{{ account_email }}"
+      record: "{{ record }}"
+      solo: yes
+      type: A
+      value: "{{ ipify_public_ip }}"
+      zone: "{{ item }}"
+    loop: "{{ zones }}"
