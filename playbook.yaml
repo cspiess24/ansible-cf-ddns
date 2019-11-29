@@ -6,11 +6,11 @@
   tasks:
   - name: check for vars file
     stat:
-      path: "{{ vars_file | default('vars.yaml') }}"
+      path: "{{ var_file_path | default('vars.yaml') }}"
     register: vars_file
 
   - name: import vars
-    include_vars: "{{ vars_file | default('vars.yaml') }}"
+    include_vars: "{{ var_file_path | default('vars.yaml') }}"
     no_log: yes
     when: vars_file.stat.exists
 
